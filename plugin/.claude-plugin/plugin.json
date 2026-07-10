@@ -1,0 +1,21 @@
+{
+  "name": "ralphy",
+  "displayName": "Ralphy",
+  "version": "4.8.0-local.1",
+  "description": "Cross-platform autonomous coding loop with first-class Claude Code and Grok Build engines.",
+  "author": {
+    "name": "Michael Shimeles",
+    "url": "https://github.com/michaelshimeles"
+  },
+  "repository": "https://github.com/michaelshimeles/ralphy",
+  "license": "MIT",
+  "keywords": [
+    "ralphy",
+    "prd",
+    "autonomous-coding",
+    "claude-code",
+    "grok-build"
+  ],
+  "commands": "./commands/",
+  "skills": "./skills/"
+}

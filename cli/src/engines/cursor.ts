@@ -1,6 +1,7 @@
 import {
 	BaseAIEngine,
 	checkForErrors,
+	commandExists,
 	detectStepFromOutput,
 	execCommand,
 	execCommandStreaming,
@@ -10,12 +11,31 @@ import type { AIResult, EngineOptions, ProgressCallback } from "./types.ts";
 
 const isWindows = process.platform === "win32";
 
+/** Detect Grok Build's `agent` compatibility shim so it is not treated as Cursor Agent. */
+export function isGrokAgentVersion(output: string): boolean {
+	return /^grok(?:\s+build)?\s+\d/im.test(output) || /grok build/i.test(output);
+}
+
 /**
  * Cursor Agent AI Engine
  */
 export class CursorEngine extends BaseAIEngine {
 	name = "Cursor Agent";
 	cliCommand = "agent";
+
+	async isAvailable(): Promise<boolean> {
+		if (!(await commandExists(this.cliCommand))) return false;
+
+		const { stdout, stderr, exitCode } = await execCommand(
+			this.cliCommand,
+			["--version"],
+			process.cwd(),
+		);
+
+		// Preserve compatibility with older Cursor builds whose version probe may fail.
+		if (exitCode !== 0) return true;
+		return !isGrokAgentVersion(stdout + stderr);
+	}
 
 	async execute(prompt: string, workDir: string, options?: EngineOptions): Promise<AIResult> {
 		const args = ["--print", "--force", "--output-format", "stream-json"];

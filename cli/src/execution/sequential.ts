@@ -84,6 +84,10 @@ export async function runSequential(options: ExecutionOptions): Promise<Executio
 
 	let iteration = 0;
 	let abortDueToRetryableFailure = false;
+	// Dry runs intentionally do not mark the backing task source complete, so
+	// remember which tasks were previewed or getNextTask() would return the same
+	// first task forever when maxIterations is unlimited.
+	const dryRunProcessedIds = new Set<string>();
 
 	while (true) {
 		// Check iteration limit
@@ -93,19 +97,27 @@ export async function runSequential(options: ExecutionOptions): Promise<Executio
 		}
 
 		// Get next task
-		const task = await taskSource.getNextTask();
+		let task = await taskSource.getNextTask();
+		if (dryRun && task && dryRunProcessedIds.has(task.id)) {
+			const allTasks = await taskSource.getAllTasks();
+			task = allTasks.find((candidate) => !dryRunProcessedIds.has(candidate.id)) ?? null;
+		}
 		if (!task) {
 			logSuccess("All tasks completed!");
 			break;
 		}
 
 		iteration++;
-		const remaining = await taskSource.countRemaining();
+		const remaining = dryRun
+			? (await taskSource.getAllTasks()).filter(
+					(candidate) => !dryRunProcessedIds.has(candidate.id),
+				).length
+			: await taskSource.countRemaining();
 		logInfo(`Task ${iteration}: ${task.title} (${remaining} remaining)`);
 
 		// Create branch if needed
 		let branch: string | null = null;
-		if (branchPerTask && baseBranch) {
+		if (!dryRun && branchPerTask && baseBranch) {
 			try {
 				branch = await createTaskBranch(task.title, baseBranch, workDir);
 				logDebug(`Created branch: ${branch}`);
@@ -131,6 +143,7 @@ export async function runSequential(options: ExecutionOptions): Promise<Executio
 
 		if (dryRun) {
 			spinner.success("(dry run) Skipped");
+			dryRunProcessedIds.add(task.id);
 		} else {
 			try {
 				aiResult = await withRetry(

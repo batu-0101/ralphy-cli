@@ -28,7 +28,7 @@ cd ralphy && chmod +x ralphy.sh
 ./ralphy.sh --prd PRD.md
 ```
 
-Both versions have identical features. Examples below use `ralphy` (npm) - substitute `./ralphy.sh` if using the bash script.
+Examples below use `ralphy` (npm). The legacy Bash script may lag newer npm CLI engines.
 
 ## Two Modes
 
@@ -89,6 +89,7 @@ ralphy --qwen       # Qwen-Code
 ralphy --droid      # Factory Droid
 ralphy --copilot    # GitHub Copilot
 ralphy --gemini     # Gemini CLI
+ralphy --grok       # Grok Build
 ```
 
 ### Model Override
@@ -329,7 +330,7 @@ ralphy --parallel --sandbox
 ## Requirements
 
 **Required:**
-- AI CLI: [Claude Code](https://github.com/anthropics/claude-code), [OpenCode](https://opencode.ai/docs/), [Cursor](https://cursor.com), Codex, Qwen-Code, [Factory Droid](https://docs.factory.ai/cli/getting-started/quickstart), [GitHub Copilot](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli), or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
+- AI CLI: [Claude Code](https://github.com/anthropics/claude-code), [OpenCode](https://opencode.ai/docs/), [Cursor](https://cursor.com), Codex, Qwen-Code, [Factory Droid](https://docs.factory.ai/cli/getting-started/quickstart), [GitHub Copilot](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli), [Gemini CLI](https://github.com/google-gemini/gemini-cli), or Grok Build
 
 **npm version (`ralphy-cli`):**
 - Node.js 18+ or Bun
@@ -355,12 +356,17 @@ ralphy --parallel --sandbox
 | Droid | `droid exec` | `--auto medium` | duration |
 | Copilot | `copilot` | `--yolo` | tokens |
 | Gemini | `gemini` | `--yolo` | tokens + cost |
+| Grok Build | `grok` | `--permission-mode bypassPermissions` | token usage not exposed |
 
 When an engine exits non-zero, ralphy includes the last lines of CLI output in the error message to make debugging easier.
 
 ---
 
 ## Changelog
+
+### Unreleased
+- **Grok Build support**: new `--grok` engine using prompt files and streaming JSON output
+- **Cursor detection**: avoid treating Grok Build's `agent.exe` compatibility shim as Cursor Agent
 
 ### v4.7.2
 - **Improved auth error detection**: simplified `extractAuthenticationError` function with better edge case handling (e.g., JSON dumps during login)
