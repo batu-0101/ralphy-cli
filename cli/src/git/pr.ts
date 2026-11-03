@@ -1,4 +1,4 @@
-import simpleGit, { type SimpleGit } from "simple-git";
+import { simpleGit, type SimpleGit } from "simple-git";
 import { execCommand } from "../engines/base.ts";
 
 /**

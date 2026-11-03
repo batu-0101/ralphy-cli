@@ -1,6 +1,6 @@
 import { existsSync, lstatSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import simpleGit, { type SimpleGit } from "simple-git";
+import { simpleGit, type SimpleGit } from "simple-git";
 import { logDebug } from "../ui/logger.ts";
 import { slugify } from "./branch.ts";
 

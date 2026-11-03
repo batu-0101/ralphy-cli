@@ -43,15 +43,15 @@ export const BoundariesSchema = z.object({
  * Full Ralphy config schema
  */
 export const RalphyConfigSchema = z.object({
-	project: ProjectSchema.default({}),
-	commands: CommandsSchema.default({}),
+	project: ProjectSchema.prefault({}),
+	commands: CommandsSchema.prefault({}),
 	rules: z
 		.array(z.string())
 		.nullable()
 		.transform((v) => v ?? [])
 		.default([]),
-	boundaries: BoundariesSchema.default({}),
-	notifications: NotificationsSchema.default({}),
+	boundaries: BoundariesSchema.prefault({}),
+	notifications: NotificationsSchema.prefault({}),
 });
 
 /**

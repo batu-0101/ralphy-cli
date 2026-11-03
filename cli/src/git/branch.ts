@@ -1,4 +1,4 @@
-import simpleGit, { type SimpleGit } from "simple-git";
+import { simpleGit, type SimpleGit } from "simple-git";
 
 /**
  * Slugify text for branch names
